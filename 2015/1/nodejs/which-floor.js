@@ -1,19 +1,16 @@
-const path = require('path');
 const fs = require('fs');
+const input = fs.readFileSync('../input.txt', 'utf-8').trim().split('');
 
-const input = fs
-	.readFileSync(path.join(__dirname, '../input.txt'), 'utf-8')
-	.toString()
-	.trim()
-	.split('');
+let currentPosition = 0;
+const currentFloor = input.reduce((floor, move, position, arr) => {
+	if (move === '(') floor++;
+	else floor--;
 
-let current_floor = 0;
-for (let i = 0; i < input.length; i++) {
-	if (input[i] === '(') 
-		current_floor++;
-	 else 
-		current_floor--;
-	
-}
+	if (currentPosition == 0 && floor < 0) {
+		currentPosition = position + 1;
+	}
 
-console.log(`Santa is currenly on floor ${current_floor}`);
+	return floor;
+}, 0);
+console.log(`Santa is currenly on floor ${currentFloor}`);
+console.log(`Santa enters the basement at position ${currentPosition}`);
