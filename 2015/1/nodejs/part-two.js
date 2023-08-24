@@ -1,11 +1,15 @@
-const input = require('./file-reader');
+const path = require('path');
+const fs = require('fs');
+
+const input = fs
+	.readFileSync(path.join(__dirname, '../input.txt'), 'utf-8')
+	.toString()
+	.trim()
+	.split('');
 
 
-const move_up = '(';
-const move_down = ')';
 let current_floor = 0;
 let current_position = 0;
-
 for (let i = 0; i < input.length; i++) {
 	if (input[i] === '(') 
 		current_floor++;
