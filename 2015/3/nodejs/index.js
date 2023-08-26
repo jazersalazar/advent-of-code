@@ -1,49 +1,21 @@
 const fs = require('fs');
-const input = fs.readFileSync('../input.txt', 'utf-8').trim().split('');
+const coords = fs.readFileSync('../input.txt', 'utf-8').trim().split('');
+const santaCoords = coords.filter((item, index) => index % 2 === 0);
+const roboCoords = coords.filter((item, index) => index % 2 === 1);
+const traverse = directions => {
+	let locations = ['0,0'];
+	let currPos = {x: 0, y: 0};
 
-function getCoor(coor, move) {
-	if (move === '>') coor.x++;
-	else if (move === '<') coor.x--;
-	else if (move === '^') coor.y++;
-	else coor.y--;
+	directions.forEach(direction => {
+		if (direction === '^') currPos.y++;
+		if (direction === 'v') currPos.y--;
+		if (direction === '>') currPos.x++;
+		if (direction === '<') currPos.x--;
 
-	return coor;
-}
+		locations.push(`${currPos.x},${currPos.y}`);
+	});
 
-function getHouses(coor, houses) {
-	if (typeof houses[coor.x] == 'undefined') houses[coor.x] = {};
-	if (typeof houses[coor.x][coor.y] === 'undefined') {
-		houses[coor.x][coor.y] = 0;
-	}
-	houses[coor.x][coor.y]++;
-
-	return houses;
-}
-
-function countDistinct(obj) {
-	let distinctCount = 0;
-	for (const key in obj) distinctCount += Object.keys(obj[key]).length
-
-	return distinctCount;
-}
-
-let lySantaCoor = {x: 0, y: 0};
-let santaCoor = {x: 0, y: 0};
-let roboCoor = {x: 0, y: 0};
-
-const lyHousesCoor = input.reduce((houses, move, index) => {
-	let coor = getCoor(lySantaCoor, move);
-	return getHouses(coor, houses); 
-}, {0: {0: 1}});
-
-const lyHouseCount = countDistinct(lyHousesCoor);
-console.log(`Santa delivered his presents in ${lyHouseCount} houses last year`);
-
-
-const housesCoor = input.reduce((houses, move, index) => {
-	let coor = getCoor(index % 2 == 0 ? santaCoor : roboCoor, move);
-	return getHouses(coor, houses); 
-}, {0: {0: 1}});
-
-const houseCount = countDistinct(housesCoor);
-console.log(`Santa and Robo-Santa delivered their presents in ${houseCount} houses`);
+	return locations;
+};
+console.log('Santa visted a total of ' + (new Set(traverse(coords)).size) + ' houses last year!');
+console.log('Santa and RoboSanta visted a total of ' + (new Set(traverse(santaCoords).concat(traverse(roboCoords))).size) + ' houses this year!');
