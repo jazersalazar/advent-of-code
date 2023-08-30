@@ -1,5 +1,6 @@
 const fs = require('fs');
 const input = fs.readFileSync('../input.txt', 'utf-8').trim().split('\n');
+// const input = ['turn on 0,0 through 0,0'];
 
 const parseCommand = _command => {
 	let command = _command.match(/(toggle|turn on|turn off) (\d+),(\d+) through (\d+),(\d+)/);
@@ -11,6 +12,7 @@ const parseCommand = _command => {
 const GRID_BASE = 1000;
 // Declare it this way so that it wont reference the parent array
 let lights = Array(GRID_BASE).fill().map(() => Array(GRID_BASE).fill(0));
+let lightsBrightness = Array(GRID_BASE).fill().map(() => Array(GRID_BASE).fill(0));
 input.forEach(command => {
 	const {action, x1, y1, x2, y2} = parseCommand(command);
 	for(let x = x1; x <= x2; x++) {
@@ -18,15 +20,28 @@ input.forEach(command => {
 			if (action === 'toggle') lights[x][y] = lights[x][y] ? 0 : 1;
 			if (action === 'turn on') lights[x][y] = 1;
 			if (action === 'turn off') lights[x][y] = 0;
+
+			if (action === 'toggle') lightsBrightness[x][y] += 2; 
+			if (action === 'turn on') lightsBrightness[x][y] += 1;
+			if (action === 'turn off') lightsBrightness[x][y] -= lightsBrightness[x][y] === 0 ? 0 : 1;
 		}
 	}
 });
 
 // Count lit lights
 let litCount = 0;
+let brightnessLevel = 0;
 lights.forEach(light => { 
 	light.forEach(state => { 
 		if(state === 1) litCount++; 
 	});
 });
 console.log(`There is ${litCount} lights that are lit!`);
+
+// Count brightness of all the lights
+lightsBrightness.forEach(light => { 
+	light.forEach(brightness => { 
+		brightnessLevel += brightness;
+	});
+});
+console.log(`The brightness level of all the lights is ${brightnessLevel}`); 
